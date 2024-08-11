@@ -8,12 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import Input from '@/components/ui/input/Input.vue'
+import Input from '@/components/ui/input/Input.vue' 
+import { h } from 'vue'
 import Label from '@/components/ui/label/Label.vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
 import { Loader2 } from 'lucide-vue-next'
-import { useToast } from '@/components/ui/toast'
+import axios from 'axios'
+import { useToast } from '@/components/ui/toast/use-toast'
+import { Toaster, ToastAction } from '@/components/ui/toast'
+
 
 type payloads = {
   name: string;
@@ -35,9 +39,9 @@ const errors = ref({
 
 const showPassword = ref(false);
 
+const { toast } = useToast()
 const loading = ref(false);
 
-const router = useRouter();
 
 const validateEmail = (email: string) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,7 +65,7 @@ const validateForm = () => {
     errors.value.password = '';
   }
 
-  if(form.value.name === '') {
+  if(!form.value.name.trim()) {
     errors.value.name = 'Invalid name'
     valid = false;
   } else {
@@ -72,15 +76,48 @@ const validateForm = () => {
 }
 
 const onSubmit = async () => {
-  if (validateForm()) {
-    try {
-      // Perform your registration logic here
-      router.push('/');
-    } catch (error) {
-      console.log(error);
+  if (!validateForm()) return
+  loading.value = true
+
+  axios.post('http://localhost:5000/api/signup', {
+    fullname: form.value.name.trim(),
+    email: form.value.email.trim(),
+    password: form.value.password.trim()
+  },
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }
-  }
+  )
+  .then(() => {
+    toast({
+      title: 'Success',
+      description: 'Account created successful'
+    })
+  })
+  .catch((err) => {
+    toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: `${err?.response?.data?.message || err.message}`,
+        action: h(ToastAction, {
+          altText: 'Try again',
+        }, {
+          default: () => 'Try again',
+        }),
+      });
+  })
+  .finally(() => {
+    loading.value = false
+  })
+
+  form.value.name = ''
+  form.value.email = ''
+  form.value.password = ''
+  
 }
+
 
 const toggleShowPassword = () => {
   showPassword.value = !showPassword.value;
@@ -88,6 +125,7 @@ const toggleShowPassword = () => {
 </script>
 
 <template>
+  <Toaster />
   <div class="flex flex-col justify-center item-center min-h-screen">
     <div class="mx-auto w-96 max-w-md">
       <form @submit.prevent="onSubmit">

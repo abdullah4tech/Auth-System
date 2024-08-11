@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken'
 import type { JwtPayload } from 'jsonwebtoken';
+import User from '../models/User';
 
 
 
@@ -17,6 +18,12 @@ const authController = async (req: AuthRequest, res: Response) => {
 
   if (token) {
     try {
+
+      const dbUser = await User.findOne({ token }).exec();
+      if (!dbUser) {
+        return res.status(401).json({ auth: false, data: 'Invalid token' });
+      }
+
       const decoded = jwt.verify(token, jwtToken) as JwtPayload;
 
       res.json({

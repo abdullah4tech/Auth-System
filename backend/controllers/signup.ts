@@ -6,17 +6,13 @@ import User from '../models/User';
 const saltRounds = 10;
 
 const validateSignUpData = async (req: Request, res: Response): Promise<boolean> => {
-  const { fullname, username, email, password } = req.body;
+  const  { fullname, email, password }= req.body;
 
   if (!fullname) {
     res.status(400).json({ message: 'Please enter your name' });
     return false;
   }
 
-  if (!username) {
-    res.status(400).json({ message: 'Please enter your username' });
-    return false;
-  }
 
   if (!isEmail(email)) {
     res.status(400).json({ message: 'Please enter a valid email' });
@@ -41,20 +37,19 @@ const validateSignUpData = async (req: Request, res: Response): Promise<boolean>
 };
 
 const signupController = async (req: Request, res: Response) => {
-  const { fullname, username, email, password } = req.body;
+  const { fullname, email, password } = req.body;
 
   const isValid = await validateSignUpData(req, res);
   if (isValid) {
     try {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      const user = await User.create({ fullname, username, email, password: hashedPassword });
+      const user = await User.create({ fullname, email, password: hashedPassword });
 
       res.json({
         message: 'Account created successfully',
         user: {
           _id: user._id,
           name: user.fullname,
-          username: user.username,
           email: user.email
         }
       });

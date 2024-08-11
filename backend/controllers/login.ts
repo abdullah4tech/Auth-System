@@ -6,27 +6,25 @@ import bcrypt from 'bcrypt';
 const jwtToken: string = process.env.JWT_LOGIN_TOKEN || '';
 
 const LoginController = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const dbUser = await User.findOne({ username }).exec();
+    const dbUser = await User.findOne({ email }).exec();
     if (!dbUser) {
       return res.status(400).json({ message: 'Account not found!' });
     }
 
-    //const match = password === dbUser.password;
     const match: boolean = await bcrypt.compare(password, dbUser.password) ? true : false
 
     if (match) {
       const token = jwt.sign(
-        { _id: dbUser.id, name: dbUser.fullname, email: dbUser.email, username }, jwtToken
+        { _id: dbUser.id, name: dbUser.fullname, email: dbUser.email }, jwtToken
       );
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        sameSite: 'strict'
-      });
+      dbUser.token = token;
+      await dbUser.save();
+
+      res.cookie('token', token);
 
       return res.json({
         status: 'success',
@@ -34,7 +32,7 @@ const LoginController = async (req: Request, res: Response) => {
         token,
       });
     } else {
-      return res.status(400).json({ message: 'Username or password incorrect!' });
+      return res.status(400).json({ message: 'email or password incorrect!' });
     }
   } catch (error) {
     console.error(error);
