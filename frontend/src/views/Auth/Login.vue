@@ -11,22 +11,33 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { h } from 'vue';
 
 import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
+import axios from 'axios';
+import { useToast } from '@/components/ui/toast/use-toast'
+import { Toaster, ToastAction } from '@/components/ui/toast'
+import useAuthStore from '@/stores/authSore';
+
+
+
+const { toast } = useToast();
+
+const authStore = useAuthStore()
 
 type payloads = {
-  username: string;
+  email: string;
   password: string;
 };
 
 const form = ref<payloads>({
-  username: '',
+  email: '',
   password: ''
 });
 
 const errors = ref({
-  username: '',
+  email: '',
   password: ''
 });
 
@@ -36,14 +47,14 @@ const router = useRouter();
 const validateForm = () => {
   let valid = true;
 
-  if (!form.value.username) {
-    errors.value.username = 'Username is required';
+  if (!form.value.email.trim()) {
+    errors.value.email = 'Email is required';
     valid = false;
   } else {
-    errors.value.username = '';
+    errors.value.email = '';
   }
 
-  if (!form.value.password) {
+  if (!form.value.password.trim()) {
     errors.value.password = 'Password is required';
     valid = false;
   } else {
@@ -54,15 +65,33 @@ const validateForm = () => {
 }
 
 const onSubmit = async () => {
-  if (validateForm()) {
-    try {
-      // Perform your login logic here
-      console.log('Submitted')
-      router.push('/');
-    } catch (error) {
-      console.log(error);
+  if (!validateForm()) return;
+  axios.post('http://localhost:5000/api/login', {
+    email: form.value.email.trim(),
+    password: form.value.password.trim()
+  },
+  {
+    headers: {
+      'Content-Type': 'application/json'
     }
-  }
+    })
+    .then((res) => {
+      authStore.setAuthentication(res.data.token)
+      router.push('/')
+    })
+    .catch((err) => {
+      console.log(err)
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: `${err?.response?.data?.message || err.message}`,
+        action: h(ToastAction, {
+          altText: 'Try again',
+        }, {
+          default: () => 'Try again',
+        }),
+      });
+    })
 }
 
 const toggleShowPassword = () => {
@@ -71,6 +100,7 @@ const toggleShowPassword = () => {
 </script>
 
 <template>
+  <Toaster />
   <div class="flex flex-col justify-center item-center min-h-screen px-4 sm:px-6 lg:px-8">
     <div class="mx-auto w-full max-w-96">
       <form @submit.prevent="onSubmit">
@@ -81,9 +111,9 @@ const toggleShowPassword = () => {
           </CardHeader>
           <CardContent class="grid gap-4">
             <div class="grid gap-2">
-              <Label for="username">Email</Label>
-              <Input id="username" type="email" placeholder="m@example.com" v-model="form.username"/>
-              <p v-if="errors.username" class="text-red-500 text-sm">{{ errors.username }}</p>
+              <Label for="email">Email</Label>
+              <Input id="email" type="email" placeholder="m@example.com" v-model="form.email"/>
+              <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
             </div>
             <div class="grid gap-2">
               <Label for="password">Password</Label>
