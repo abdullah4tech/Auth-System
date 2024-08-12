@@ -7,8 +7,8 @@ import routes from './router/authRouter';
 
 
 const app = express();
-const port: number = parseInt(process.env.PORT || '3000', 10);
-const connString: string = process.env.MONGO_URI || '';
+const port = process.env.PORT || '3000';
+const connString = process.env.LOCAL_URI || '';
 
 // Middleware
 app.use(cors());
@@ -19,9 +19,12 @@ mongoose
   .connect(connString)
   .then(() => console.log('\nMongoDB Connected...'))
   .catch((error) => console.log('MongoDB connection error: ', error));
+mongoose.set("strictQuery", false)
 
 app.use('/api', routes);
 
-app.listen(port, () => {
-  console.log(`\nListening at endpoint: http://localhost:${port}/api`);
-});
+app.get('/api', (req, res) => {
+  res.send("You not suppose to do that! you're not authorized here you asshole")
+})
+
+app.listen(port, () => console.log(`\n\napp is running on http://localhost:${port}/api`));
