@@ -3,12 +3,19 @@ import Cookies from 'js-cookie'
 import axios from 'axios';
 import { ref } from 'vue';
 
+
+interface UserInfo {
+  name: string;
+  email: string;
+}
+
+
 const useAuthStore = defineStore('authStore', () => {
 
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = import.meta.env.NODE_ENV === 'production';
 
-  const user_info = ref([])
+  const user_info = ref<UserInfo | null>(null);
 
   const setCookie = (key: string, value: string) => {
     Cookies.set(key, value, { expires: 1, sameSite: 'Lax', secure: isProduction });
@@ -46,7 +53,7 @@ const useAuthStore = defineStore('authStore', () => {
   
       // Remove the token from cookies and clear user info on the frontend
       removeCookie("token");
-      user_info.value = [];
+      user_info.value = null;
 
       location.reload();
   
@@ -62,7 +69,7 @@ const useAuthStore = defineStore('authStore', () => {
     if (token) {
       try {
         const res = await axios.post('http://localhost:5000/api/auth', { token });
-        user_info.value = res.data.data;
+        user_info.value = res.data.data as UserInfo;
         return true; // User is authenticated
       } catch (error) {
         logOut(); // Log out if there's an error (e.g., token is invalid)
