@@ -1,0 +1,39 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main  # Change this to your deployment branch if needed
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: TypeScript type-check
+        run: bun run tsc --noEmit
+        continue-on-error: false
+
+      - name: Run linting
+        run: bun run lint
+        continue-on-error: false
+
+      - name: Build the project
+        run: bun run build
+        continue-on-error: false
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Add your Vercel token to GitHub Secrets
+        run: vercel --prod --token $VERCEL_TOKEN
