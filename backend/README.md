@@ -1,4 +1,4 @@
-# backend
+# Authentication System backend
 
 To install dependencies:
 
@@ -6,7 +6,7 @@ To install dependencies:
 bun install
 ```
 
-To run:
+To start the server:
 
 ```bash
 bun run index.ts
