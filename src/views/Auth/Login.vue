@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { h } from 'vue';
 
 import { ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink } from 'vue-router';
 import axios from 'axios';
 import { useToast } from '@/components/ui/toast/use-toast'
 import { Toaster, ToastAction } from '@/components/ui/toast'
@@ -42,7 +42,7 @@ const errors = ref({
 });
 
 const showPassword = ref(false);
-const router = useRouter();
+
 
 const validateForm = () => {
   let valid = true;
@@ -66,7 +66,7 @@ const validateForm = () => {
 
 const onSubmit = async () => {
   if (!validateForm()) return;
-  axios.post('http://localhost:5000/api/login', {
+  axios.post('https://backend-aurh-production.up.railway.app/api/login', {
     email: form.value.email.trim(),
     password: form.value.password.trim()
   },
@@ -77,7 +77,7 @@ const onSubmit = async () => {
     })
     .then((res) => {
       authStore.setAuthentication(res.data.token)
-      router.push('/')
+      location.reload();
     })
     .catch((err) => {
       toast({

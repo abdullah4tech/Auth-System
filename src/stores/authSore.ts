@@ -41,7 +41,7 @@ const useAuthStore = defineStore('authStore', () => {
       if (token) {
         // Make the logout request to the backend with the token in the headers
         await axios.post(
-          'http://localhost:5000/api/logout',
+          'https://backend-aurh-production.up.railway.app/api/logout',
           {},
           {
             headers: {
@@ -68,7 +68,7 @@ const useAuthStore = defineStore('authStore', () => {
 
     if (token) {
       try {
-        const res = await axios.post('http://localhost:5000/api/auth', { token });
+        const res = await axios.post('https://backend-aurh-production.up.railway.app/api/auth', { token });
         user_info.value = res.data.data as UserInfo;
         return true; // User is authenticated
       } catch (error) {

@@ -79,7 +79,7 @@ const onSubmit = async () => {
   if (!validateForm()) return
   loading.value = true
 
-  axios.post('http://localhost:5000/api/signup', {
+  axios.post('https://backend-aurh-production.up.railway.app/api/signup', {
     fullname: form.value.name.trim(),
     email: form.value.email.trim(),
     password: form.value.password.trim()
