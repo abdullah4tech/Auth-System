@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { h } from 'vue';
 
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useToast } from '@/components/ui/toast/use-toast'
 import { Toaster, ToastAction } from '@/components/ui/toast'
@@ -42,7 +42,7 @@ const errors = ref({
 });
 
 const showPassword = ref(false);
-
+const router = useRouter();
 
 const validateForm = () => {
   let valid = true;
@@ -77,7 +77,7 @@ const onSubmit = async () => {
     })
     .then((res) => {
       authStore.setAuthentication(res.data.token)
-      location.reload();
+      router.push('/')
     })
     .catch((err) => {
       toast({
