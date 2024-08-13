@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import useAuthStore from '@/stores/authSore';
 import { onMounted, ref } from 'vue';
+import { Loader2 } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
 
@@ -13,10 +14,17 @@ interface User {
 // Initialize `user` as a ref with an initial empty object
 const user = ref<User | null>(null);
 
+const loading = ref(false)
+
 const checkAuth = async () => {
   // Assuming `authStore.user_info` is of type `User`
   user.value = authStore.user_info || null; 
 };
+
+const signOut = () => {
+  loading.value = true
+  authStore.logOut()
+}
 
 onMounted(() => {
   checkAuth();
@@ -30,7 +38,15 @@ onMounted(() => {
       Email: {{ user.email }}
     </div>
     <div>
-      <Button @click="authStore.logOut()">Logout</Button>
+      <Button @click="signOut">
+        <div v-if="loading" class="flex">
+          <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+          Please wait
+        </div>
+        <div v-else>
+          Logout
+        </div>
+      </Button>
     </div>
   </div>
 </template>

@@ -19,8 +19,10 @@ import axios from 'axios';
 import { useToast } from '@/components/ui/toast/use-toast'
 import { Toaster, ToastAction } from '@/components/ui/toast'
 import useAuthStore from '@/stores/authSore';
+import { Loader2 } from 'lucide-vue-next';
 
 
+const loading = ref(false)
 
 const { toast } = useToast();
 
@@ -66,6 +68,7 @@ const validateForm = () => {
 
 const onSubmit = async () => {
   if (!validateForm()) return;
+  loading.value = true
   axios.post('https://backend-aurh-production.up.railway.app/api/login', {
     email: form.value.email.trim(),
     password: form.value.password.trim()
@@ -77,9 +80,11 @@ const onSubmit = async () => {
     })
     .then((res) => {
       authStore.setAuthentication(res.data.token)
+      loading.value = false
       router.push('/')
     })
     .catch((err) => {
+      loading.value = false
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
@@ -122,6 +127,7 @@ const toggleShowPassword = () => {
                   :type="showPassword ? 'text' : 'password'"
                   placeholder="********"
                   v-model="form.password"
+                  @keydown.enter="onSubmit"
                 />
                 <Button
                   type="button"
@@ -134,12 +140,20 @@ const toggleShowPassword = () => {
               </div>
               <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
             </div>
-            <RouterLink to="/auth/reset" class="text-right">
+            <a to="/auth/reset" class="text-right">
               <Button variant="link" class="ml-auto md:text-sm">Forgot your password?</Button>
-            </RouterLink>
+            </a>
           </CardContent>
           <CardFooter class="flex-col space-y-2">
-            <Button class="w-full" type="submit">Login</Button>
+            <Button class="w-full" type="submit">
+              <div v-if="loading" class="flex">
+                <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+                Please wait
+              </div>
+              <div v-else>
+                Login
+              </div>
+            </Button>
             <p class="text-sm">
               Don't have an account?
               <RouterLink 
