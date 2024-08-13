@@ -80,8 +80,8 @@ const onSubmit = async () => {
     })
     .then((res) => {
       authStore.setAuthentication(res.data.token)
-      loading.value = false
       router.push('/')
+      loading.value = false
     })
     .catch((err) => {
       loading.value = false
