@@ -140,9 +140,11 @@ const toggleShowPassword = () => {
               </div>
               <p v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</p>
             </div>
-            <a to="/auth/reset" class="text-right">
-              <Button variant="link" class="ml-auto md:text-sm">Forgot your password?</Button>
-            </a>
+            <div class="text-right">
+              <RouterLink to="/auth/reset">
+                <p class="ml-auto md:text-sm underline">Forgot your password?</p>
+              </RouterLink>
+            </div>
           </CardContent>
           <CardFooter class="flex-col space-y-2">
             <Button class="w-full" type="submit">
