@@ -3,7 +3,7 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch if needed
+      - main
 
 jobs:
   build-and-deploy:
@@ -35,5 +35,5 @@ jobs:
 
       - name: Deploy to Vercel
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Add your Vercel token to GitHub Secrets
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel --prod --token $VERCEL_TOKEN

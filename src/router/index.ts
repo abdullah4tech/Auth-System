@@ -23,20 +23,29 @@ const router = createRouter({
       meta: { guest: true }
     },
     {
-      path: '/auth/reset',
-      name: 'reset password',
-      component: () => import('@/views/Auth/Reset.vue'),
+      path: '/auth/searchaccount',
+      component: () => import('@/views/Auth/Searchaccount.vue'),
       meta: { guest: true }
+    },
+    {
+      path: '/auth/searchaccount/verifyotp',
+      component: () => import('@/views/Auth/Verifyotp.vue'),
+      meta: { guest: true }
+    },
+    {
+      path: '/auth/searchaccount/verifyotp/reset',
+      component: () => import('@/views/Auth/PasswordReset.vue'),
+      meta: { gues: true }
     },
     {
       path: '/:catchAll(.*)',
       name: '404 page',
-      component: () => import('@/views/Error/404.vue'),
+      component: () => import('@/views/Error/404.vue')
     }
   ]
 })
 
-router.beforeEach(async (to, from, next) => { 
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const isLoggedIn = await authStore.isLogin()
 

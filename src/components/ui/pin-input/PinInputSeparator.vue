@@ -11,5 +11,5 @@ const forwardedProps = useForwardProps(props)
     <slot>
       <DashIcon />
     </slot>
-  </primitive>
+  </Primitive>
 </template>

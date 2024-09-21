@@ -1,43 +1,39 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie'
-import axios from 'axios';
-import { ref } from 'vue';
-
+import axios from 'axios'
+import { ref } from 'vue'
 
 interface UserInfo {
-  name: string;
-  email: string;
+  name: string
+  email: string
 }
 
-
 const useAuthStore = defineStore('authStore', () => {
+  const isProduction = import.meta.env.NODE_ENV === 'production'
 
-
-  const isProduction = import.meta.env.NODE_ENV === 'production';
-
-  const user_info = ref<UserInfo | null>(null);
+  const user_info = ref<UserInfo | null>(null)
 
   const setCookie = (key: string, value: string) => {
-    Cookies.set(key, value, { expires: 1, sameSite: 'Lax', secure: isProduction });
+    Cookies.set(key, value, { expires: 1, sameSite: 'Lax', secure: isProduction })
   }
 
   const removeCookie = (key: string) => {
-    Cookies.remove(key);
+    Cookies.remove(key)
   }
 
   const getCookie = (key: string) => {
-    return Cookies.get(key);
+    return Cookies.get(key)
   }
 
   const setAuthentication = (token: string) => {
-    setCookie("token", token);
+    setCookie('token', token)
   }
 
   const logOut = async () => {
     try {
       // Get the token from cookies
-      const token = getCookie("token");
-  
+      const token = getCookie('token')
+
       if (token) {
         // Make the logout request to the backend with the token in the headers
         await axios.post(
@@ -45,47 +41,48 @@ const useAuthStore = defineStore('authStore', () => {
           {},
           {
             headers: {
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           }
-        );
+        )
       }
-  
-      // Remove the token from cookies and clear user info on the frontend
-      removeCookie("token");
-      user_info.value = null;
 
-      location.reload();
-  
+      // Remove the token from cookies and clear user info on the frontend
+      removeCookie('token')
+      user_info.value = null
+
+      location.reload()
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error('Error during logout:', error)
       // Handle errors as needed
     }
   }
 
   const isLogin = async () => {
-    const token = getCookie("token");
+    const token = getCookie('token')
 
     if (token) {
       try {
-        const res = await axios.post('https://backend-aurh-production.up.railway.app/api/auth', { token });
-        user_info.value = res.data.data as UserInfo;
-        return true; // User is authenticated
+        const res = await axios.post('https://backend-aurh-production.up.railway.app/api/auth', {
+          token
+        })
+        user_info.value = res.data.data as UserInfo
+        return true // User is authenticated
       } catch (error) {
-        logOut(); // Log out if there's an error (e.g., token is invalid)
-        return false;
+        logOut() // Log out if there's an error (e.g., token is invalid)
+        return false
       }
     }
 
-    return false; // No token, user is not authenticated
+    return false // No token, user is not authenticated
   }
 
   return {
     user_info,
     setAuthentication,
     logOut,
-    isLogin,
+    isLogin
   }
 })
 
-export default useAuthStore;
+export default useAuthStore
