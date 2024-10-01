@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import useAuthStore from '@/stores/authSore'
+import useAuthStore from '@/stores/authStore'
 import { onMounted, ref } from 'vue'
 import { Loader2 } from 'lucide-vue-next'
 

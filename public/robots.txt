@@ -1,0 +1,17 @@
+# Allow all search engine bots to crawl everything except sensitive areas
+User-agent: *
+Disallow: /login/
+Disallow: /register/
+Disallow: /admin/
+
+# Optionally block specific API routes if they shouldn't be crawled
+Disallow: /api/
+
+# Block crawlers from crawling non-public assets (if applicable)
+Disallow: /public/assets/
+
+# Allow everything else to be crawled
+Allow: /
+
+# Specify the location of your sitemap if you have one
+Sitemap: https://your-deployed-domain.com/sitemap.xml

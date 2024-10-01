@@ -79,7 +79,7 @@ const onSubmit = async () => {
 
   axios
     .post(
-      'https://backend-aurh-production.up.railway.app/api/signup',
+      'http://localhost:5000/api/signup', // https://backend-aurh-production.up.railway.app/api/signup
       {
         fullname: form.value.name.trim(),
         email: form.value.email.trim(),

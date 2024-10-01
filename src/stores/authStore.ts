@@ -37,7 +37,7 @@ const useAuthStore = defineStore('authStore', () => {
       if (token) {
         // Make the logout request to the backend with the token in the headers
         await axios.post(
-          'https://backend-aurh-production.up.railway.app/api/logout',
+          'http://localhost:5000/api/logout',
           {},
           {
             headers: {
@@ -63,7 +63,7 @@ const useAuthStore = defineStore('authStore', () => {
 
     if (token) {
       try {
-        const res = await axios.post('https://backend-aurh-production.up.railway.app/api/auth', {
+        const res = await axios.post('http://localhost:5000/api/auth', {
           token
         })
         user_info.value = res.data.data as UserInfo
@@ -77,7 +77,24 @@ const useAuthStore = defineStore('authStore', () => {
     return false // No token, user is not authenticated
   }
 
+
+  const findAccount = async (email: string) => {
+    try {
+      const res = await axios.post('http://localhost:5000/api/findaccount', { email });
+      
+      // Check if the response status is 200
+      if (res.status === 200) {
+        return true; 
+      }
+      
+      return false;  // Account not found
+    } catch (err) {
+      return false;  // Return false on error as well
+    }
+  }
+
   return {
+    findAccount,
     user_info,
     setAuthentication,
     logOut,

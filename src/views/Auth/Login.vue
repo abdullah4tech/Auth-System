@@ -18,7 +18,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { Toaster, ToastAction } from '@/components/ui/toast'
-import useAuthStore from '@/stores/authSore'
+import useAuthStore from '@/stores/authStore'
 import { Loader2 } from 'lucide-vue-next'
 
 const loading = ref(false)
@@ -70,7 +70,7 @@ const onSubmit = async () => {
   loading.value = true
   axios
     .post(
-      'https://backend-aurh-production.up.railway.app/api/login',
+      'http://localhost:5000/api/login',
       {
         email: form.value.email.trim(),
         password: form.value.password.trim()
@@ -123,7 +123,7 @@ const toggleShowPassword = () => {
           <CardContent class="grid gap-4">
             <div class="grid gap-2">
               <Label for="email">Email</Label>
-              <Input id="email" type="email" placeholder="m@example.com" v-model="form.email" />
+              <Input id="email" autocomplete="email" type="email" loading="lazy" placeholder="m@example.com" v-model="form.email" />
               <p v-if="errors.email" class="text-red-500 text-sm">{{ errors.email }}</p>
             </div>
             <div class="grid gap-2">
@@ -149,7 +149,7 @@ const toggleShowPassword = () => {
             </div>
             <div class="text-right">
               <RouterLink to="/auth/searchaccount">
-                <p class="ml-auto md:text-sm underline">Forgot your password?</p>
+                <p loading="lazy" class="ml-auto md:text-sm underline">Forgot your password?</p>
               </RouterLink>
             </div>
           </CardContent>
